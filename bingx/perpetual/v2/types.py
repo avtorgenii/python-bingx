@@ -1,9 +1,17 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from enum import Enum
 from typing import Any
 
-from bingX._helpers import DictMixin
 from bingX.exceptions import OrderException
+
+
+class DictMixin:
+    def to_dict(self) -> dict[str, Any]:
+        def convert_value(value):
+            if isinstance(value, Enum):
+                return value.value
+            return value
+        return {k: convert_value(v) for k, v in asdict(self).items() if v is not None}
 
 
 class MarginType(Enum):
@@ -38,8 +46,8 @@ class Order(DictMixin):
     quantity: float | None = None
     type: OrderType = OrderType.MARKET
     price: float | None = None
-    stop_price: float | None = None
-    recv_window: int | None = None
+    stopPrice: float | None = None
+    recvWindow: int | None = None
 
     def __post_init__(self):
         if self.type == OrderType.LIMIT:
@@ -70,28 +78,29 @@ class IncomeType(Enum):
 @dataclass
 class ProfitLossFundFlow(DictMixin):
     symbol: str | None = None
-    income_type: IncomeType | None = None
-    start_time: int | None = None
-    end_time: int | None = None
+    incomeType: IncomeType | None = None
+    startTime: int | None = None
+    endTime: int | None = None
     limit: int = 100
-    recv_window: int | None = None
+    recvWindow: int | None = None
 
 
 @dataclass
 class ForceOrder(DictMixin):
     symbol: str | None = None
-    auto_close_type: str | None = None
-    start_time: int | None = None
-    end_time: int | None = None
+    autoCloseType: str | None = None
+    startTime: int | None = None
+    endTime: int | None = None
     limit: int = 50
-    recv_window: int | None = None
+    recvWindow: int | None = None
 
 
 @dataclass
 class HistoryOrder(DictMixin):
     symbol: str
-    order_id: int | None = None
-    start_time: int | None = None
-    end_time: int | None = None
+    orderId: int | None = None
+    startTime: int | None = None
+    endTime: int | None = None
     limit: int = 500
-    recv_window: int | None = None
+    timeStamp: int | None = None
+    recvWindow: int | None = None

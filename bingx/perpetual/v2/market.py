@@ -7,7 +7,7 @@ class Market:
     def __init__(self, api_key: str, secret_key: str) -> None:
         self.__http_manager = _HTTPManager(api_key, secret_key)
 
-    def get_contract_info(self) -> list[dict[str, Any]]:
+    def get_contract_info(self, symbol: str) -> dict[str, Any]:
         """
         Get the contract information of the swap contract
 
@@ -16,8 +16,10 @@ class Market:
 
         endpoint =  "/openApi/swap/v2/quote/contracts"
 
-        response = self.__http_manager.get(endpoint)
-        return response.json()["data"]
+        payload = {"symbol": symbol}
+
+        response = self.__http_manager.get(endpoint, payload)
+        return response.json()["data"][0]
 
     def get_latest_price_of_trading_pair(self, symbol: str | None = None) -> list[dict[str, Any]] | dict[str, Any]:
         """
